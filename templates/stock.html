@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Information</title>
+</head>
+<body>
+    <h1>Stock Information</h1>
+    <p>Symbol: {{ symbol }}</p>
+    <p>Price: {{ price }} 
+    {% if change >= 0 %}
+        +{{ change }}%
+    {% else %}
+        {{ change }}%
+    {% endif %}</p>
+    <a href="/">Back</a>
+</body>
+</html>
