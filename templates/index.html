@@ -1,17 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stock Market Info</title>
+    <title>Stock Checker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Stock Market Info</h1>
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
-    <form action="/stock" method="post">
-        <label for="symbol">Enter Stock Symbol:</label>
-        <input type="text" id="symbol" name="symbol" required>
-        <button type="submit">Get Info</button>
+    <h1>Stock Checker</h1>
+    <form id="stockForm">
+        <input type="text" id="ticker" name="ticker" placeholder="Enter stock ticker">
+        <button type="submit">Get Data</button>
     </form>
+    <canvas id="stockChart" width="800" height="400"></canvas>
+
+    <script>
+        document.getElementById('stockForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            fetch('/get_stock_data', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('stockChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Stock Price',
+                            data: data.values,
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Price'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
